@@ -584,6 +584,15 @@ ALL_MODELS = [
         display_name="Simple Model 1",
         description="Copy last tokens (for debugging)",
     ),
+    # Test
+    Model(
+        group="geclm",
+        creator_organization="geclm",
+        name="geclm/gpt2_local",
+        display_name="GPT2 local",
+        description="GPT2 local",
+        tags=[TEXT_MODEL_TAG, FULL_FUNCTIONALITY_TEXT_MODEL_TAG, GPT2_TOKENIZER_TAG],
+    ),
 ]
 
 MODEL_NAME_TO_MODEL: Dict[str, Model] = {model.name: model for model in ALL_MODELS}

@@ -2,6 +2,7 @@ from helm.proxy.models import get_model, get_model_names_with_tag, Model, WIDER_
 from .ai21_window_service import AI21WindowService
 from .anthropic_window_service import AnthropicWindowService
 from .cohere_window_service import CohereWindowService
+from .geclm_window_service import GeclmWindowService
 from .luminous_window_service import (
     LuminousBaseWindowService,
     LuminousExtendedWindowService,
@@ -38,6 +39,7 @@ class WindowServiceFactory:
         engine: str = model.engine
 
         window_service: WindowService
+
         if model_name in get_model_names_with_tag(WIDER_CONTEXT_WINDOW_TAG):
             window_service = WiderOpenAIWindowService(service)
         # For the Google models, we approximate with the OpenAIWindowService
@@ -86,6 +88,8 @@ class WindowServiceFactory:
             window_service = CohereWindowService(service)
         elif organization == "ai21":
             window_service = AI21WindowService(service=service, gpt2_window_service=GPT2WindowService(service))
+        elif organization == "geclm":
+            window_service = GeclmWindowService(service)
         else:
             raise ValueError(f"Unhandled model name: {model_name}")
 

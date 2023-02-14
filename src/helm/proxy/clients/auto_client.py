@@ -20,6 +20,7 @@ from .aleph_alpha_client import AlephAlphaClient
 from .anthropic_client import AnthropicClient
 from .chat_gpt_client import ChatGPTClient
 from .cohere_client import CohereClient
+from .geclm_client import LocalGeclmClient
 from .together_client import TogetherClient
 from .google_client import GoogleClient
 from .goose_ai_client import GooseAIClient
@@ -112,6 +113,8 @@ class AutoClient(Client):
                 client = TogetherClient(api_key=self.credentials.get("togetherApiKey", None), cache_config=cache_config)
             elif organization == "simple":
                 client = SimpleClient(cache_config=cache_config)
+            elif organization == "geclm":
+                client = LocalGeclmClient(cache_config=cache_config)
             else:
                 raise ValueError(f"Unknown organization: {organization}")
             self.clients[organization] = client
@@ -174,6 +177,8 @@ class AutoClient(Client):
                 client = CohereClient(api_key=self.credentials["cohereApiKey"], cache_config=cache_config)
             elif organization == "simple":
                 client = SimpleClient(cache_config=cache_config)
+            elif organization == "geclm":
+                client = LocalGeclmClient(cache_config=cache_config)
             else:
                 raise ValueError(f"Unknown organization: {organization}")
             self.tokenizer_clients[organization] = client
