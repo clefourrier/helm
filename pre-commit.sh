@@ -29,18 +29,18 @@ pip install -e .
 pip check
 
 # Python style checks and linting
-black --check --diff src scripts || (
+black --check --diff src || (
   echo ""
   echo "The code formatting check failed. To fix the formatting, run:"
   echo ""
   echo ""
-  echo -e "\tblack src scripts"
+  echo -e "\tblack src"
   echo ""
   echo ""
   exit 1
 )
 
-mypy --install-types --non-interactive src scripts
-flake8 src scripts
+mypy --install-types --non-interactive src
+flake8 src
 
 echo "Done."
