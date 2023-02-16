@@ -18,8 +18,8 @@ nltk_data/
 
 # Where data lives (e.g., newsqa)
 restricted
-src/helm/gpt2_local
-src/helm/run_specs.conf
+gpt2_local
+run_specs.conf
 
 # Percy's stuff
 rc

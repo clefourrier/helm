@@ -15,21 +15,8 @@ from helm.common.tokenization_request import (
 )
 from helm.proxy.retry import retry_request
 from .client import Client
-from .ai21_client import AI21Client
-from .aleph_alpha_client import AlephAlphaClient
-from .anthropic_client import AnthropicClient
-from .chat_gpt_client import ChatGPTClient
-from .cohere_client import CohereClient
 from .geclm_client import LocalGeclmClient
-from .together_client import TogetherClient
-from .google_client import GoogleClient
-from .goose_ai_client import GooseAIClient
-from .huggingface_client import HuggingFaceClient
-from .ice_tokenizer_client import ICETokenizerClient
-from .openai_client import OpenAIClient
-from .microsoft_client import MicrosoftClient
 from .perspective_api_client import PerspectiveAPIClient
-from .yalm_tokenizer_client import YaLMTokenizerClient
 from .simple_client import SimpleClient
 
 
@@ -43,7 +30,6 @@ class AutoClient(Client):
         self.clients: Dict[str, Client] = {}
         self.tokenizer_clients: Dict[str, Client] = {}
         huggingface_cache_config = self._build_cache_config("huggingface")
-        self.huggingface_client = HuggingFaceClient(huggingface_cache_config)
         hlog(f"AutoClient: cache_path = {cache_path}")
         hlog(f"AutoClient: mongo_uri = {mongo_uri}")
 
@@ -63,57 +49,7 @@ class AutoClient(Client):
         if client is None:
             cache_config: CacheConfig = self._build_cache_config(organization)
 
-            if organization == "openai":
-                # TODO: add ChatGPT to the OpenAIClient when it's supported.
-                #       We're using a separate client for now since we're using an unofficial Python library.
-                # See https://github.com/acheong08/ChatGPT/wiki/Setup on how to get a valid session token.
-                chat_gpt_client: ChatGPTClient = ChatGPTClient(
-                    session_token=self.credentials.get("chatGPTSessionToken", ""),
-                    lock_file_path=os.path.join(self.cache_path, "ChatGPT.lock"),
-                    # TODO: use `cache_config` above. Since this feature is still experimental,
-                    #       save queries and responses in a separate collection.
-                    cache_config=self._build_cache_config("ChatGPT"),
-                    tokenizer_client=self.get_tokenizer_client("huggingface"),
-                )
-
-                org_id = self.credentials.get("openaiOrgId", None)
-                client = OpenAIClient(
-                    api_key=self.credentials["openaiApiKey"],
-                    cache_config=cache_config,
-                    chat_gpt_client=chat_gpt_client,
-                    org_id=org_id,
-                )
-            elif organization == "AlephAlpha":
-                client = AlephAlphaClient(api_key=self.credentials["alephAlphaKey"], cache_config=cache_config)
-            elif organization == "ai21":
-                client = AI21Client(api_key=self.credentials["ai21ApiKey"], cache_config=cache_config)
-            elif organization == "cohere":
-                client = CohereClient(api_key=self.credentials["cohereApiKey"], cache_config=cache_config)
-            elif organization == "gooseai":
-                org_id = self.credentials.get("gooseaiOrgId", None)
-                client = GooseAIClient(
-                    api_key=self.credentials["gooseaiApiKey"], cache_config=cache_config, org_id=org_id
-                )
-            elif organization == "huggingface":
-                client = self.huggingface_client
-            elif organization == "anthropic":
-                client = AnthropicClient(api_key=self.credentials["anthropicApiKey"], cache_config=cache_config)
-            elif organization == "microsoft":
-                org_id = self.credentials.get("microsoftOrgId", None)
-                lock_file_path: str = os.path.join(self.cache_path, f"{organization}.lock")
-                client = MicrosoftClient(
-                    api_key=self.credentials.get("microsoftApiKey", None),
-                    lock_file_path=lock_file_path,
-                    cache_config=cache_config,
-                    org_id=org_id,
-                )
-            elif organization == "google":
-                client = GoogleClient(cache_config=cache_config)
-            elif organization == "together":
-                client = TogetherClient(api_key=self.credentials.get("togetherApiKey", None), cache_config=cache_config)
-            elif organization == "simple":
-                client = SimpleClient(cache_config=cache_config)
-            elif organization == "geclm":
+            if organization == "geclm":
                 client = LocalGeclmClient(cache_config=cache_config)
             else:
                 raise ValueError(f"Unknown organization: {organization}")
@@ -152,32 +88,7 @@ class AutoClient(Client):
 
         if client is None:
             cache_config: CacheConfig = self._build_cache_config(organization)
-            if organization in [
-                "anthropic",
-                "bigscience",
-                "bigcode",
-                "EleutherAI",
-                "facebook",
-                "google",
-                "gooseai",
-                "huggingface",
-                "microsoft",
-                "openai",
-            ]:
-                client = HuggingFaceClient(cache_config=cache_config)
-            elif organization == "AlephAlpha":
-                client = AlephAlphaClient(api_key=self.credentials["alephAlphaKey"], cache_config=cache_config)
-            elif organization == "TsinghuaKEG":
-                client = ICETokenizerClient(cache_config=cache_config)
-            elif organization == "Yandex":
-                client = YaLMTokenizerClient(cache_config=cache_config)
-            elif organization == "ai21":
-                client = AI21Client(api_key=self.credentials["ai21ApiKey"], cache_config=cache_config)
-            elif organization == "cohere":
-                client = CohereClient(api_key=self.credentials["cohereApiKey"], cache_config=cache_config)
-            elif organization == "simple":
-                client = SimpleClient(cache_config=cache_config)
-            elif organization == "geclm":
+            if organization == "geclm":
                 client = LocalGeclmClient(cache_config=cache_config)
             else:
                 raise ValueError(f"Unknown organization: {organization}")

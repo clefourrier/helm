@@ -50,7 +50,7 @@ class ServerService(Service):
             credentials = {}
 
         self.client = AutoClient(credentials, cache_path, mongo_uri)
-        self.token_counter = AutoTokenCounter(self.client.huggingface_client)
+        self.token_counter = AutoTokenCounter(None)
         self.accounts = Accounts(accounts_path, root_mode=root_mode)
         self.perspective_api_client = self.client.get_toxicity_classifier_client()
 

@@ -114,7 +114,7 @@ class LocalGeclmServer:
 class LocalGeclmClient(Client):
     def __init__(self, cache_config: CacheConfig):
         self.cache = Cache(cache_config)
-        
+
     @staticmethod
     def tokenize_by_space(text: str) -> List[str]:
         """Simply tokenizes by a single white space."""
